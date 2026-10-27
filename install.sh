@@ -8,6 +8,7 @@ VERSION=""
 PREFIX="${HOME}/.local/bin"
 DRY_RUN=0
 SKIP_NOTARIZATION=0
+MIRROR=0
 TMP=""
 NEW_BIN=""
 
@@ -22,6 +23,10 @@ Options:
   --prefix <dir>        Install directory (default: ~/.local/bin)
   --dry-run             Print the plan without downloading anything
   --skip-notarization   Skip the Apple notarization check (macOS)
+  --mirror              Download without touching GitHub: the version from
+                        registry.npmmirror.com, the binary from npmmirror's
+                        release mirror, checksums.txt from the npm package
+                        on cdn.jsdelivr.net
   -h, --help            Show this help
 
 The download is verified against the release's checksums.txt (sha256).
@@ -45,6 +50,7 @@ while [ $# -gt 0 ]; do
     --prefix=*) PREFIX="${1#*=}"; shift ;;
     --dry-run) DRY_RUN=1; shift ;;
     --skip-notarization) SKIP_NOTARIZATION=1; shift ;;
+    --mirror) MIRROR=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) die "unknown option: $1 (try --help)" ;;
   esac
@@ -73,6 +79,13 @@ case "$arch" in
   *) die "unsupported architecture: ${arch}" ;;
 esac
 
+if [ -z "$VERSION" ] && [ "$MIRROR" -eq 1 ]; then
+  info "Resolving the latest version from registry.npmmirror.com..."
+  VERSION=$(curl -fsSL --proto '=https' --tlsv1.2 \
+      "https://registry.npmmirror.com/@larksuite/cli/latest" 2>/dev/null \
+    | grep -o '"version":"[^"]*"' | head -n 1 | sed 's/.*:"\(.*\)"/\1/') || VERSION=""
+  [ -n "$VERSION" ] || die "could not resolve the latest version; pass --version <version>"
+fi
 if [ -z "$VERSION" ]; then
   info "Resolving the latest release of ${REPO}..."
   VERSION=$(curl -fsSL --proto '=https' --tlsv1.2 \
@@ -87,12 +100,19 @@ fi
 VERSION="${VERSION#v}"
 
 asset="lark-cli-${VERSION}-${os}-${arch}.tar.gz"
-base="https://github.com/${REPO}/releases/download/v${VERSION}"
+if [ "$MIRROR" -eq 1 ]; then
+  asset_url="https://registry.npmmirror.com/-/binary/lark-cli/v${VERSION}/${asset}"
+  checksums_url="https://cdn.jsdelivr.net/npm/@larksuite/cli@${VERSION}/checksums.txt"
+else
+  base="https://github.com/${REPO}/releases/download/v${VERSION}"
+  asset_url="${base}/${asset}"
+  checksums_url="${base}/checksums.txt"
+fi
 dest="${PREFIX}/lark-cli"
 
 info "  version:  ${VERSION}"
 info "  platform: ${os}-${arch}"
-info "  asset:    ${asset}"
+info "  url:      ${asset_url}"
 info "  target:   ${dest}"
 
 if [ "$DRY_RUN" -eq 1 ]; then
@@ -107,16 +127,16 @@ trap cleanup EXIT HUP INT TERM
 info "Downloading..."
 if [ -t 2 ]; then
   curl -fL --progress-bar --proto '=https' --tlsv1.2 --retry 3 --retry-delay 1 \
-    -o "${TMP}/${asset}" "${base}/${asset}" \
-    || die "download failed: ${base}/${asset}"
+    -o "${TMP}/${asset}" "$asset_url" \
+    || die "download failed: ${asset_url}"
 else
   curl -fsSL --proto '=https' --tlsv1.2 --retry 3 --retry-delay 1 \
-    -o "${TMP}/${asset}" "${base}/${asset}" \
-    || die "download failed: ${base}/${asset}"
+    -o "${TMP}/${asset}" "$asset_url" \
+    || die "download failed: ${asset_url}"
 fi
 curl -fsSL --proto '=https' --tlsv1.2 \
-  -o "${TMP}/checksums.txt" "${base}/checksums.txt" \
-  || die "could not download checksums.txt"
+  -o "${TMP}/checksums.txt" "$checksums_url" \
+  || die "could not download ${checksums_url}"
 
 info "Verifying sha256..."
 grep -qF " ${asset}" "${TMP}/checksums.txt" \
