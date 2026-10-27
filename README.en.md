@@ -1,5 +1,10 @@
 # pure-lark-cli
 
+[![CI](https://github.com/Hariketsu/pure-lark-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Hariketsu/pure-lark-cli/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/Hariketsu/pure-lark-cli)](LICENSE)
+[![lark-cli](https://img.shields.io/github/v/release/larksuite/cli?label=lark-cli)](https://github.com/larksuite/cli/releases/latest)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)
+
 [中文](README.md) | English
 
 The cleanest way to put the official Lark / Feishu CLI, [`lark-cli`](https://github.com/larksuite/cli), on your machine, plus a single Lark entry point for AI agents.
@@ -11,11 +16,13 @@ The repo ships two things you can use independently:
 
 ## Why not the official installer
 
-By default, the recommended `npx @larksuite/cli@latest install` installs the full skill set into `~/.agents/skills/`.
-
-Also:
-
-- A plain `lark-cli update` installs the full skill set into `~/.agents/skills/` via npx and writes a lock file, even when you're already on the latest version.
+|  | Official `npx @larksuite/cli@latest install` | pure-lark-cli |
+|---|---|---|
+| What gets installed | Global npm package + the full agent skill set | Just the `lark-cli` binary |
+| Needs Node / npm | Yes | No |
+| Agent skills | 28 flat skills | 1 `lark` entry point (optional) |
+| Config and login | Run by the install wizard | Run by you |
+| Upgrading | `lark-cli update` reinstalls the full skill set, even when already up to date | Rerun the install script |
 
 ## Quick start
 
@@ -30,15 +37,18 @@ lark-cli config init
 
 # 3. Log in as a user (skip if you only use the bot identity)
 lark-cli auth login
+
+# 4. Optional: install the lark skill for your agent
+npx skills add Hariketsu/pure-lark-cli -g
 ```
+
+For details on step 4 and how to migrate from the official skills, see [`lark` skill](#lark-skill-optional).
 
 If GitHub is slow or unreachable for you, step 1 can go through mirrors without touching GitHub at all:
 
 ```sh
 curl -fsSL https://cdn.jsdelivr.net/gh/Hariketsu/pure-lark-cli@main/install.sh | sh -s -- --mirror
 ```
-
-The script comes from jsDelivr, which caches for up to about 12 hours, so you may get a slightly older script. `--mirror` makes the script download the binary from npmmirror's copy of the official release and read `checksums.txt` from the official npm package on jsDelivr. The binary and its checksums come from two different third parties, and on macOS the Apple signature and notarization are still checked. Linux has no signature check and relies on sha256 alone, so you trust two mirrors that the GitHub path doesn't involve.
 
 To keep the install minimal, the script doesn't run steps 2 and 3 for you or edit your shell config.
 If `~/.local/bin` isn't on your `PATH`, the installer prints a warning at the end, and you add it to your shell config yourself, for example:
@@ -79,9 +89,7 @@ Don't use a plain `lark-cli update`, for the reason above. To check whether a ne
 
 ## `lark` skill (optional)
 
-The vendor provides agent skills split by product area (messaging, docs, Base, calendar, approvals, …). Once installed, they add a couple dozen entries to the agent's skill list.
-
-This repo's `lark` skill folds them into one entry point:
+This repo's `lark` skill folds the bloated official set into one entry point:
 
 - It takes up a single slot in the skill list, and its trigger description covers every Lark scenario.
 - It ships no product docs itself. It points the agent at the official docs embedded in the binary, so they always match the CLI version you installed, with nothing extra to update.
@@ -89,7 +97,7 @@ This repo's `lark` skill folds them into one entry point:
 
 ### Install
 
-The skill is distributed through the [skills](https://skills.sh/) tool, so this step needs Node 22.20+. The CLI itself doesn't depend on Node.
+The skill is distributed through the [skills](https://skills.sh/) tool.
 
 ```sh
 npx skills add Hariketsu/pure-lark-cli -g

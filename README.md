@@ -1,5 +1,10 @@
 # pure-lark-cli
 
+[![CI](https://github.com/Hariketsu/pure-lark-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Hariketsu/pure-lark-cli/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/Hariketsu/pure-lark-cli)](LICENSE)
+[![lark-cli](https://img.shields.io/github/v/release/larksuite/cli?label=lark-cli)](https://github.com/larksuite/cli/releases/latest)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)
+
 中文 | [English](README.en.md)
 
 用最干净的方式在本机装上飞书官方 CLI [`lark-cli`](https://github.com/larksuite/cli)，并给 AI agent 一个统一的飞书入口。
@@ -11,11 +16,13 @@
 
 ## 为什么不用官方安装
 
-官方推荐的 `npx @larksuite/cli@latest install` 默认行为会往 `~/.agents/skills/` 装全套 skill。
-
-btw：
-
-- 直接跑 `lark-cli update`，即使已经是最新版，也会用 npx 把全套 skill 装进 `~/.agents/skills/` 并写 lock 文件。
+|  | 官方 `npx @larksuite/cli@latest install` | pure-lark-cli |
+|---|---|---|
+| 安装内容 | 全局 npm 包 + 全套 agent skill | 只有 `lark-cli` 二进制 |
+| 依赖 Node / npm | 需要 | 不需要 |
+| agent skill | 28 个平铺 | 1 个 `lark` 入口（可选） |
+| 配置和登录 | 安装向导里一并执行 | 你自己执行 |
+| 升级 | `lark-cli update` 即使已是最新版，也会重装全套 skill | 重跑安装脚本 |
 
 ## 快速开始
 
@@ -30,7 +37,12 @@ lark-cli config init
 
 # 3. 以用户身份登录（只用机器人身份可以跳过）
 lark-cli auth login
+
+# 4. 可选：给 agent 装 lark skill
+npx skills add Hariketsu/pure-lark-cli -g
 ```
+
+第 4 步的详细说明和从官方 skill 迁移的方法，见 [`lark` skill](#lark-skill可选)。
 
 如果访问 GitHub 不稳定，第 1 步可以改用镜像，全程不访问 GitHub：
 
@@ -38,9 +50,7 @@ lark-cli auth login
 curl -fsSL https://cdn.jsdelivr.net/gh/Hariketsu/pure-lark-cli@main/install.sh | sh -s -- --mirror
 ```
 
-脚本来自 jsDelivr。它会缓存最长约 12 小时，所以可能拿到稍旧的脚本。`--mirror` 让脚本从 npmmirror 同步的官方 Release 下载二进制，从 jsDelivr 上的官方 npm 包读取 `checksums.txt`。二进制和校验和来自两个不同的第三方，macOS 上还会检查 Apple 签名和公证。Linux 上没有签名检查，只靠 sha256 校验，所以比全走 GitHub 多信任了两个镜像。
-
-为了最小化安装，脚本不会替你执行第 2、3 步和改 shell 配置。
+为了最小化安装，脚本不会替你执行第 2、3 步 和 改 shell 配置。
 如果 `~/.local/bin` 不在 `PATH` 里，安装结束时会提示，需要自己加到 shell 配置里，例如：
 
 ```sh
@@ -79,9 +89,7 @@ curl -fsSL https://github.com/Hariketsu/pure-lark-cli/raw/main/install.sh | sh -
 
 ## `lark` skill（可选）
 
-官方为 agent 准备了一套按业务拆分的 skill（消息、云文档、多维表格、日历、审批……），装完会在 agent 的 skill 列表里平铺出二十多个条目。
-
-本仓库的 `lark` skill 把它们收成一个入口：
+本仓库的 `lark` skill 把官方臃肿集合收成一个入口：
 
 - 只占一个 skill 条目，触发描述覆盖全部飞书场景。
 - 自身不带业务文档。指导 agent 读取二进制里内嵌的官方文档，所以文档版本始终和你装的 CLI 一致，不需要单独升级。
@@ -89,7 +97,7 @@ curl -fsSL https://github.com/Hariketsu/pure-lark-cli/raw/main/install.sh | sh -
 
 ### 安装
 
-skill 通过 [skills](https://skills.sh/) 工具分发，所以这一步需要 Node 22.20+。CLI 本身不依赖 Node。
+skill 通过 [skills](https://skills.sh/) 工具分发。
 
 ```sh
 npx skills add Hariketsu/pure-lark-cli -g
