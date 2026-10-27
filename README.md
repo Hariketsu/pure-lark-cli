@@ -11,7 +11,7 @@
 
 ## 为什么不用官方安装
 
-官方推荐的 `npx @larksuite/cli@latest install`默认行为会往 `~/.agents/skills/` 装全套 skill。
+官方推荐的 `npx @larksuite/cli@latest install` 默认行为会往 `~/.agents/skills/` 装全套 skill。
 
 btw：
 
@@ -40,7 +40,7 @@ curl -fsSL https://cdn.jsdelivr.net/gh/Hariketsu/pure-lark-cli@main/install.sh |
 
 脚本来自 jsDelivr。它会缓存最长约 12 小时，所以可能拿到稍旧的脚本。`--mirror` 让脚本从 npmmirror 同步的官方 Release 下载二进制，从 jsDelivr 上的官方 npm 包读取 `checksums.txt`。二进制和校验和来自两个不同的第三方，macOS 上还会检查 Apple 签名和公证。Linux 上没有签名检查，只靠 sha256 校验，所以比全走 GitHub 多信任了两个镜像。
 
-为了最小化安装，脚本不会替你执行第 2、3 步 和 改 shell 配置。
+为了最小化安装，脚本不会替你执行第 2、3 步和改 shell 配置。
 如果 `~/.local/bin` 不在 `PATH` 里，安装结束时会提示，需要自己加到 shell 配置里，例如：
 
 ```sh
@@ -92,7 +92,7 @@ curl -fsSL https://github.com/Hariketsu/pure-lark-cli/raw/main/install.sh | sh -
 skill 通过 [skills](https://skills.sh/) 工具分发，所以这一步需要 Node 22.20+。CLI 本身不依赖 Node。
 
 ```sh
-npx skills add Hariketsu/pure-lark-cli
+npx skills add Hariketsu/pure-lark-cli -g
 ```
 
 ### 从官方 skill 迁移

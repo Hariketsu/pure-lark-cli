@@ -92,7 +92,7 @@ This repo's `lark` skill folds them into one entry point:
 The skill is distributed through the [skills](https://skills.sh/) tool, so this step needs Node 22.20+. The CLI itself doesn't depend on Node.
 
 ```sh
-npx skills add Hariketsu/pure-lark-cli
+npx skills add Hariketsu/pure-lark-cli -g
 ```
 
 ### Migrating from the official skills
