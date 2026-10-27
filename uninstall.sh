@@ -5,7 +5,6 @@ set -eu
 
 PREFIX="${HOME}/.local/bin"
 PURGE=0
-LOGOUT=1
 
 usage() {
   cat <<'EOF'
@@ -15,8 +14,7 @@ Usage: uninstall.sh [options]
 
 Options:
   --prefix <dir>   Directory that holds lark-cli (default: ~/.local/bin)
-  --purge          Also delete ~/.lark-cli (config and login state)
-  --no-logout      Do not call `lark-cli auth logout` before deleting
+  --purge          Also sign out and delete ~/.lark-cli (config and login state)
   -h, --help       Show this help
 EOF
 }
@@ -26,7 +24,6 @@ while [ $# -gt 0 ]; do
     --prefix) [ $# -ge 2 ] || { printf 'error: --prefix needs a value\n' >&2; exit 1; }; PREFIX="$2"; shift 2 ;;
     --prefix=*) PREFIX="${1#*=}"; shift ;;
     --purge) PURGE=1; shift ;;
-    --no-logout) LOGOUT=0; shift ;;
     -h|--help) usage; exit 0 ;;
     *) printf 'error: unknown option: %s (try --help)\n' "$1" >&2; exit 1 ;;
   esac
@@ -41,7 +38,7 @@ bin="${PREFIX}/lark-cli"
 
 if [ -x "$bin" ]; then
   # The CLI has to sign out itself while it still exists: it owns the Keychain entry.
-  if [ "$LOGOUT" -eq 1 ] && "$bin" auth logout >/dev/null 2>&1; then
+  if [ "$PURGE" -eq 1 ] && "$bin" auth logout >/dev/null 2>&1; then
     printf 'Signed out of lark-cli.\n'
   fi
   rm -f "$bin"
