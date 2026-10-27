@@ -9,11 +9,6 @@
 
 The cleanest way to put the official Lark / Feishu CLI, [`lark-cli`](https://github.com/larksuite/cli), on your machine, plus a single Lark entry point for AI agents.
 
-The repo ships two things you can use independently:
-
-- **An install script** that downloads `lark-cli` from the official GitHub Release, verifies it, and drops it into `~/.local/bin`. One file, no Node or npm required.
-- **A `lark` skill**, an agent skill built to stay minimal. It can replace the official set of 28 flat skills, and reads the official docs from the `lark-cli` binary at runtime.
-
 ## Why not the official installer
 
 |  | Official `npx @larksuite/cli@latest install` | pure-lark-cli |
@@ -23,6 +18,11 @@ The repo ships two things you can use independently:
 | Agent skills | 28 flat skills | 1 `lark` entry point (optional) |
 | Config and login | Run by the install wizard | Run by you |
 | Upgrading | `lark-cli update` reinstalls the full skill set, even when already up to date | Rerun the install script |
+
+The repo ships two things you can use independently:
+
+- **An install script** that downloads `lark-cli` from the official GitHub Release, verifies it, and drops it into `~/.local/bin`. One file, no Node or npm required.
+- **A `lark` skill**, an agent skill built to stay minimal. It can replace the official set of 28 flat skills, and reads the official docs from the `lark-cli` binary at runtime.
 
 ## Quick start
 
@@ -50,7 +50,7 @@ If GitHub is slow or unreachable for you, step 1 can go through mirrors without 
 curl -fsSL https://cdn.jsdelivr.net/gh/Hariketsu/pure-lark-cli@main/install.sh | sh -s -- --mirror
 ```
 
-To keep the install minimal, the script doesn't run steps 2 and 3 for you or edit your shell config.
+> To keep the install minimal, the script doesn't run steps 2 and 3 for you or edit your shell config.
 If `~/.local/bin` isn't on your `PATH`, the installer prints a warning at the end, and you add it to your shell config yourself, for example:
 
 ```sh
