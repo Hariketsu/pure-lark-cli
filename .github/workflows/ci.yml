@@ -23,6 +23,7 @@ jobs:
       - name: Install into a scratch HOME
         env:
           HOME: ${{ runner.temp }}/home
+          GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p "$HOME"
           ./install.sh --prefix "$HOME/bin" --skip-notarization
@@ -33,6 +34,7 @@ jobs:
       - name: Reinstall is idempotent
         env:
           HOME: ${{ runner.temp }}/home
+          GH_TOKEN: ${{ github.token }}
         run: ./install.sh --prefix "$HOME/bin" --skip-notarization
 
   skill:
