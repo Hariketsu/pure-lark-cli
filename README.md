@@ -9,11 +9,6 @@
 
 用最干净的方式在本机装上飞书官方 CLI [`lark-cli`](https://github.com/larksuite/cli)，并给 AI agent 一个统一的飞书入口。
 
-仓库里有两样东西，可以分开用：
-
-- **安装脚本**：从官方 GitHub Release 下载 `lark-cli`，校验后放进 `~/.local/bin`。只装这一个文件，不需要 Node 或 npm。
-- **`lark` skill**：面向简洁设计的 agent skill。可以取代官方那套臃肿达 28 个平铺的 skill，运行时从 `lark-cli` 二进制里读取官方文档。
-
 ## 为什么不用官方安装
 
 |  | 官方 `npx @larksuite/cli@latest install` | pure-lark-cli |
@@ -23,6 +18,11 @@
 | agent skill | 28 个平铺 | 1 个 `lark` 入口（可选） |
 | 配置和登录 | 安装向导里一并执行 | 你自己执行 |
 | 升级 | `lark-cli update` 即使已是最新版，也会重装全套 skill | 重跑安装脚本 |
+
+仓库里有两样东西，可以分开用：
+
+- **安装脚本**：从官方 GitHub Release 下载 `lark-cli`，校验后放进 `~/.local/bin`。只装这一个文件，不需要 Node 或 npm。
+- **`lark` skill**：面向简洁设计的 agent skill。可以取代官方那套臃肿达 28 个平铺的 skill，运行时从 `lark-cli` 二进制里读取官方文档。
 
 ## 快速开始
 
@@ -50,7 +50,7 @@ npx skills add Hariketsu/pure-lark-cli -g
 curl -fsSL https://cdn.jsdelivr.net/gh/Hariketsu/pure-lark-cli@main/install.sh | sh -s -- --mirror
 ```
 
-为了最小化安装，脚本不会替你执行第 2、3 步 和 改 shell 配置。
+> 为了最小化安装，脚本不会替你执行第 2、3 步 和 改 shell 配置。
 如果 `~/.local/bin` 不在 `PATH` 里，安装结束时会提示，需要自己加到 shell 配置里，例如：
 
 ```sh

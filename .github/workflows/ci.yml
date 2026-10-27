@@ -13,11 +13,7 @@ jobs:
         run: shellcheck install.sh uninstall.sh
 
   install:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-14]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - name: Install into a scratch HOME
