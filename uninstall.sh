@@ -29,6 +29,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# shellcheck disable=SC2088 # match a literal ~ that the shell did not expand
 case "$PREFIX" in
   "~/"*) PREFIX="${HOME}/${PREFIX#\~/}" ;;
   "~") PREFIX="${HOME}" ;;
